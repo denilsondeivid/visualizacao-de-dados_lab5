@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variação da Chuva - Fazenda Carnaúba</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        #chart-container {
+            width: 80%;
+            height: 500px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <label for="minFilter">Filtro mínimo de variação (mm):</label>
+        <input type="number" id="minFilter" value="-100">
+        <label for="maxFilter">Filtro máximo de variação (mm):</label>
+        <input type="number" id="maxFilter" value="100">
+        <button onclick="applyFilter()">Aplicar Filtro</button>
+    </div>
+    <div id="chart-container"></div>
+    <script>
+        var rawData = [
+            { year: 2014, variation: 50 },
+            { year: 2015, variation: -30 },
+            { year: 2016, variation: 20 },
+            { year: 2017, variation: -10 },
+            { year: 2018, variation: 40 },
+            { year: 2019, variation: -20 },
+            { year: 2020, variation: 15 },
+            { year: 2021, variation: -25 },
+            { year: 2022, variation: 30 },
+            { year: 2023, variation: -5 }
+        ];
+
+        function applyFilter() {
+            let minVal = parseFloat(document.getElementById('minFilter').value);
+            let maxVal = parseFloat(document.getElementById('maxFilter').value);
+            let filteredData = rawData.filter(d => d.variation >= minVal && d.variation <= maxVal);
+            updateChart(filteredData);
+        }
+
+        function updateChart(data) {
+            var chart = echarts.init(document.getElementById('chart-container'));
+            var option = {
+                title: {
+                    text: 'Variação da chuva acumulada por ano (2014 a 2023) - Fazenda Carnaúba - Taperoá - PB'
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                xAxis: {
+                    type: 'value',
+                    name: 'Variação da Chuva (mm)',
+                    nameLocation: 'middle',
+                    nameGap: 30
+                },
+                yAxis: {
+                    type: 'category',
+                    data: data.map(d => d.year)
+                },
+                series: [{
+                    type: 'bar',
+                    data: data.map(d => ({ value: d.variation, itemStyle: { color: d.variation >= 0 ? 'lightgreen' : 'orangered' } }))
+                }]
+            };
+            chart.setOption(option);
+        }
+        updateChart(rawData);
+    </script>
+</body>
+</html>
