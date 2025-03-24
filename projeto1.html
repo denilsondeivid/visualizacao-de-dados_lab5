@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volume de Chuva - Fazenda Carnaúba</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        #chart {
+            width: 100%;
+            height: 500px;
+        }
+        #filter {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Volume de chuva acumulada por ano (2014 a 2023) - Fazenda Carnaúba - Taperoá - PB</h2>
+    <label for="threshold">Filtrar por nível mínimo de chuva (mm): </label>
+    <input type="number" id="threshold" value="0" min="0">
+    <button id="filterButton">Aplicar Filtro</button>
+    <div id="chart"></div>
+    <script>
+        var chartDom = document.getElementById('chart');
+        var myChart = echarts.init(chartDom);
+        var data = [
+            { year: 2014, value: 404.6 },
+            { year: 2015, value: 386.7 },
+            { year: 2016, value: 295.0 },
+            { year: 2017, value: 211.5 },
+            { year: 2018, value: 342.3 },
+            { year: 2019, value: 487.2 },
+            { year: 2020, value: 512.6 },
+            { year: 2021, value: 389.1 },
+            { year: 2022, value: 450.8 },
+            { year: 2023, value: 498.7 }
+        ];
+
+        function updateChart() {
+            var threshold = parseFloat(document.getElementById('threshold').value);
+            var filteredData = data.filter(d => d.value >= threshold);
+
+            var option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    data: filteredData.map(d => d.year),
+                    name: 'Ano',
+                    axisLine: {
+                        lineStyle: {
+                            color: 'black'
+                        }
+                    },
+                    axisLabel: {
+                        color: 'black'
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'Volume de Chuva (mm)',
+                    axisLine: {
+                        lineStyle: {
+                            color: 'black'
+                        }
+                    },
+                    axisLabel: {
+                        color: 'black'
+                    }
+                },
+                series: [{
+                    data: filteredData.map(d => d.value),
+                    type: 'bar',
+                    itemStyle: {
+                        color: '#2E8B57'
+                    }
+                }],
+                dataZoom: [{
+                    type: 'slider',
+                    start: 0,
+                    end: 100
+                }]
+            };
+
+            myChart.setOption(option, true);
+        }
+
+        document.getElementById('filterButton').addEventListener('click', updateChart);
+        updateChart(); // Inicializa o gráfico
+    </script>
+</body>
+</html>
